@@ -1,4 +1,3 @@
-
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext("2d")
 
@@ -15,8 +14,8 @@ function createImage(imgSrc){
     return img
 }
 
-let platf = createImage("./images/medium.png")
-let b1 = createImage("./images/forest1.jpg")
+let platf = createImage("./images/platform7.png")
+let b1 = createImage("./images/bg2.jpg")
 
 
 class Player{
@@ -85,14 +84,14 @@ class Player{
     }
 }
 class Platform{
-    constructor(x,y,w,h){
+    constructor(x,y){
         this.position={
             x,
             y
         }
 
-        this.width=w
-        this.height=h
+        this.width=platf.width
+        this.height=platf.height
 
     }
 
@@ -120,10 +119,7 @@ class Background{
     }
 
     drawBg(){
-        // c.fillStyle="blue"
-        // c.fillRect(this.position.x,this.position.y,
-        //     this.width,this.height)
-
+       
         c.drawImage(this.imag,this.position.x,this.position.y,this.width, this.height)
     }
 
@@ -136,9 +132,15 @@ class Background{
 
 
 let player=new Player()
-let platforms = [new Platform(-10,570,300,40), new Platform(430,570,300,40),new Platform(780,470,350,40),new Platform(1120,350,350,40),new Platform(1520,470,350,40)
-    ,new Platform(1850,345,350,40),new Platform(2150,450,350,40),new Platform(2450,150,350),new Platform(2950,570,550,40),new Platform(3450,400,350,40)]
+// let platforms = [new Platform(-10,570), new Platform(430,570),new Platform(780,470),
+//     new Platform(1120,350),new Platform(1520,470),new Platform(1850,345),new Platform(2150,450),
+//     new Platform(2450,150),new Platform(2950,570),new Platform(3450,400)]
 
+let platforms = [new Platform(-10,570), new Platform(430,570),new Platform(780,470)]
+
+let newPlatform = new Platform(3950,300)
+
+platforms.push(newPlatform)
 
 let background = [
     new Background(0,0,1024,596,b1)
@@ -153,15 +155,20 @@ let keys ={
     }
 }
 
-let travelled=0
+let travelled = 0
+let travelForUpdate = 0
+let first = 3500
 
 function restart(){
 // image variables 
 
  player = new Player()
- platforms = [new Platform(-10,570,300,40), new Platform(430,570,300,40),new Platform(780,470,350,40),new Platform(1120,350,350,40),new Platform(1520,470,350,40)
-    ,new Platform(1850,345,350,40),new Platform(2150,450,350,40),new Platform(2450,150,350),new Platform(2950,570,550,40),new Platform(3450,400,350,40)]
+//  platforms = [new Platform(-10,570,300,40), new Platform(430,570,300,40),new Platform(780,470,350,40),
+//     new Platform(1120,350,350,40),new Platform(1520,470,350,40),new Platform(1850,345,350,40),
+//     new Platform(2150,450,350,40),new Platform(2450,150,350),new Platform(2950,570,550,40),
+//     new Platform(3450,400,350,40)]
 
+platforms = [new Platform(-10,570,300,40), new Platform(430,570,300,40),new Platform(780,470,350,40)]
 
  background = [
     new Background(0,0,1024,596,b1)
@@ -169,6 +176,7 @@ function restart(){
 
 
  travelled=0
+ travelForUpdate = 0
 
 }
 
@@ -197,15 +205,20 @@ function animate(){
         if (keys.right.pressed){
             platforms.forEach((platform => {
                 platform.position.x-=player.speed
-                travelled+=1
+                
+                
             }))
+            travelForUpdate +=1
+            travelled+=1
             
         }
         else if (keys.left.pressed && travelled > 0){
             platforms.forEach((platform => {
                 platform.position.x+=player.speed
                 travelled-=1
+                
             }))
+            travelForUpdate -= 1
             
         }
 
@@ -223,10 +236,31 @@ function animate(){
     }
 })
 
-if(travelled>=3250){
+let start = 600
+
+if (travelForUpdate>=75){
+    let wi = start + platf.width
+    let he = (Math.random() * 100)*5.96
+    if (he <100){
+        he += 100
+    }
+    start = wi+300
+    let newPlatform = new Platform(wi,he)
+    platforms.push(newPlatform)
+    console.log(travelForUpdate)
+    console.log(travelled)
+    travelForUpdate = 0
+}
+
+
+// Win condition 
+
+if(travelled>=6250){
     console.log("win")
 }
 
+
+// Lose Condition 
 
 if (player.position.y > canvas.height ){
     console.log("you lose")
@@ -234,39 +268,28 @@ if (player.position.y > canvas.height ){
 }
     }
 
-
-    // WIN CONDITION 
-
-
-
-
-    // LOSE CONDITION
-
-    
-
-
 animate()
 
 
 addEventListener("keydown",({keyCode})=>{
     switch (keyCode){
         case 38:
-            console.log("up")
+            // console.log("up")
             player.velocity.y-=20
             
             break;
         case 37:
-            console.log("left")
+            // console.log("left")
             keys.left.pressed=true
             player.sprite = player.spriteSet.run.left
             player.currentCrop = player.spriteSet.run.cropWidth
             player.width = player.spriteSet.run.width
             break;
         case 40:
-            console.log("down")
+            // console.log("down")
             break;
         case 39:
-            console.log("right")
+            // console.log("right")
             keys.right.pressed=true
             player.sprite = player.spriteSet.run.right
             player.currentCrop = player.spriteSet.run.cropWidth
@@ -278,21 +301,21 @@ addEventListener("keydown",({keyCode})=>{
 addEventListener("keyup",({keyCode})=>{
     switch (keyCode){
         case 38:
-            console.log("up")
+            // console.log("up")
             break;
         case 37:
-            console.log("left")
+            // console.log("left")
             keys.left.pressed = false
             player.sprite = player.spriteSet.stand.left
             player.currentCrop = player.spriteSet.stand.cropWidth
             player.width = player.spriteSet.stand.width
             break;
         case 40:
-            console.log("down")
+            // console.log("down")
             // player.velocity.y=0
             break;
         case 39:
-            console.log("right")
+            // console.log("right")
             keys.right.pressed=false
             player.sprite = player.spriteSet.stand.right
             player.currentCrop = player.spriteSet.stand.cropWidth
