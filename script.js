@@ -33,6 +33,7 @@ class Player{
         // this.width=playerStandR.width
         this.width = 66
         // this.height=playerStandR.height
+        
         this.height = 150
 
         this.frames = 0
@@ -276,7 +277,6 @@ addEventListener("keydown",({keyCode})=>{
         case 38:
             // console.log("up")
             player.velocity.y-=20
-            
             break;
         case 37:
             // console.log("left")
